@@ -8,6 +8,14 @@ import { immer } from 'zustand/middleware/immer'
 export type Theme = 'light' | 'dark' | 'system'
 export type TimeZone = 'UTC' | 'local'
 
+// Helper to safely check online status
+const getDefaultOnlineStatus = () => {
+  if (typeof navigator !== 'undefined') {
+    return navigator.onLine
+  }
+  return true
+}
+
 // Define the app state interface
 interface AppState {
   // Theme settings
@@ -47,7 +55,7 @@ export const useAppStore = create<AppState>()(
       }),
       
       // Default online status (determined by browser)
-      isOnline: typeof navigator !== 'undefined' ? navigator.onLine : true,
+      isOnline: getDefaultOnlineStatus(),
       setIsOnline: (status) => set((state) => {
         state.isOnline = status
       }),
@@ -69,7 +77,20 @@ export const useAppStore = create<AppState>()(
     })),
     {
       name: 'devpulse-app-storage',
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => {
+        // Use localStorage only on the client side
+        if (typeof window !== 'undefined') {
+          return localStorage
+        }
+        // Provide a mock storage for SSR
+        return {
+          getItem: () => null,
+          setItem: () => {},
+          removeItem: () => {}
+        }
+      }),
+      // Skip hydration on server
+      skipHydration: true
     }
   )
 ) 

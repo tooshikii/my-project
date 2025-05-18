@@ -5,13 +5,14 @@ import { useAppStore } from '@/lib/store/appStore'
 import { useCodingSessionsStore } from '@/lib/store/codingSessionsStore'
 import { useLearningItemsStore } from '@/lib/store/learningItemsStore'
 import { useFocusSessionsStore } from '@/lib/store/focusSessionsStore'
+import StoreHydration from './StoreHydration'
 
 export default function StoreProvider({
   children,
 }: {
   children: React.ReactNode
 }) {
-  // Get actions from each store
+  // Get actions from each store - use individual selectors
   const setIsOnline = useAppStore((state) => state.setIsOnline)
   const fetchCodingSessions = useCodingSessionsStore((state) => state.fetchSessions)
   const fetchLearningItems = useLearningItemsStore((state) => state.fetchItems)
@@ -20,6 +21,9 @@ export default function StoreProvider({
   
   // Initialize data
   useEffect(() => {
+    // Only run on client side
+    if (typeof window === 'undefined') return;
+    
     // Fetch initial data
     fetchCodingSessions()
     fetchLearningItems()
@@ -40,6 +44,9 @@ export default function StoreProvider({
   
   // Timer for focus sessions
   useEffect(() => {
+    // Only run on client side
+    if (typeof window === 'undefined') return;
+    
     const interval = setInterval(() => {
       tickTimer()
     }, 1000)
@@ -47,5 +54,10 @@ export default function StoreProvider({
     return () => clearInterval(interval)
   }, [tickTimer])
   
-  return <>{children}</>
+  return (
+    <>
+      <StoreHydration />
+      {children}
+    </>
+  )
 } 

@@ -4,10 +4,9 @@ import { useEffect } from 'react'
 import { useAppStore } from '@/lib/store/appStore'
 
 export function useTheme() {
-  const { theme, setTheme } = useAppStore((state) => ({
-    theme: state.theme,
-    setTheme: state.setTheme,
-  }))
+  // Use separate selectors to avoid creating a new object on each render
+  const theme = useAppStore((state) => state.theme)
+  const setTheme = useAppStore((state) => state.setTheme)
 
   // Apply the theme to the document
   useEffect(() => {

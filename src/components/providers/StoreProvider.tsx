@@ -1,63 +1,72 @@
-'use client'
+"use client";
 
-import { useEffect } from 'react'
-import { useAppStore } from '@/lib/store/appStore'
-import { useCodingSessionsStore } from '@/lib/store/codingSessionsStore'
-import { useLearningItemsStore } from '@/lib/store/learningItemsStore'
-import { useFocusSessionsStore } from '@/lib/store/focusSessionsStore'
-import StoreHydration from './StoreHydration'
+import { useEffect } from "react";
+import { useAppStore } from "@/lib/store/appStore";
+import { useCodingSessionsStore } from "@/lib/store/codingSessionsStore";
+import { useLearningItemsStore } from "@/lib/store/learningItemsStore";
+import { useFocusSessionsStore } from "@/lib/store/focusSessionsStore";
+import StoreHydration from "./StoreHydration";
 
 export default function StoreProvider({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   // Get actions from each store - use individual selectors
-  const setIsOnline = useAppStore((state) => state.setIsOnline)
-  const fetchCodingSessions = useCodingSessionsStore((state) => state.fetchSessions)
-  const fetchLearningItems = useLearningItemsStore((state) => state.fetchItems)
-  const fetchFocusSessions = useFocusSessionsStore((state) => state.fetchSessions)
-  const tickTimer = useFocusSessionsStore((state) => state.tickTimer)
-  
+  const setIsOnline = useAppStore((state) => state.setIsOnline);
+  const fetchCodingSessions = useCodingSessionsStore(
+    (state) => state.fetchSessions,
+  );
+  const fetchLearningItems = useLearningItemsStore((state) => state.fetchItems);
+  const fetchFocusSessions = useFocusSessionsStore(
+    (state) => state.fetchSessions,
+  );
+  const tickTimer = useFocusSessionsStore((state) => state.tickTimer);
+
   // Initialize data
   useEffect(() => {
     // Only run on client side
-    if (typeof window === 'undefined') return;
-    
+    if (typeof window === "undefined") return;
+
     // Fetch initial data
-    fetchCodingSessions()
-    fetchLearningItems()
-    fetchFocusSessions()
-    
+    fetchCodingSessions();
+    fetchLearningItems();
+    fetchFocusSessions();
+
     // Set up online/offline listeners
-    const handleOnline = () => setIsOnline(true)
-    const handleOffline = () => setIsOnline(false)
-    
-    window.addEventListener('online', handleOnline)
-    window.addEventListener('offline', handleOffline)
-    
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
     return () => {
-      window.removeEventListener('online', handleOnline)
-      window.removeEventListener('offline', handleOffline)
-    }
-  }, [fetchCodingSessions, fetchLearningItems, fetchFocusSessions, setIsOnline])
-  
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, [
+    fetchCodingSessions,
+    fetchLearningItems,
+    fetchFocusSessions,
+    setIsOnline,
+  ]);
+
   // Timer for focus sessions
   useEffect(() => {
     // Only run on client side
-    if (typeof window === 'undefined') return;
-    
+    if (typeof window === "undefined") return;
+
     const interval = setInterval(() => {
-      tickTimer()
-    }, 1000)
-    
-    return () => clearInterval(interval)
-  }, [tickTimer])
-  
+      tickTimer();
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [tickTimer]);
+
   return (
     <>
       <StoreHydration />
       {children}
     </>
-  )
-} 
+  );
+}

@@ -51,3 +51,20 @@ A resume project featuring 3D visualization of your record collection on an inte
 - [ ] Auto-populate record details from API
 - [ ] Handle API errors and rate limiting gracefully
 - [ ] Add loading states during AP
+
+
+## Recommended Starting Order:
+
+- Start with Phase 1 (Auth) + Phase 2 (Data) together - get the backend working first
+- Move to Phase 3 (3D visualization) - this is your "wow factor"
+- Add Phase 4 (Details view)
+- Save Phase 5 (Discogs API) for last - you can manually add records while building
+
+Tech Stack Suggestions:
+
+- Frontend: React + Three.js (or React Three Fiber for easier React integration)
+- Auth/Backend: Firebase (easiest), Supabase, or build custom with Node.js
+- Styling: Tailwind CSS or styled-components
+- 3D: Three.js + React Three Fiber + Drei (helper library)
+
+https://www.discogs.com/developers/

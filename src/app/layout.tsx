@@ -1,9 +1,9 @@
+import DatabaseProvider from "@/components/providers/DatabaseProvider";
+import StoreProvider from "@/components/providers/StoreProvider";
+import Navigation from "@/components/ui/Navigation";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Navigation from "@/components/ui/Navigation";
-import DatabaseProvider from "@/components/providers/DatabaseProvider";
-import StoreProvider from "@/components/providers/StoreProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -13,11 +13,19 @@ export const metadata: Metadata = {
     "Track your coding activity, learning progress, and development habits",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const res = await fetch("https://api.github.com/repos/vercel/next.js", {
+    next: { revalidate: 5 },
+  });
+
+  const data = await res.json();
+
+  console.log({ data });
+
   return (
     <html lang="en">
       <body className={inter.className}>
